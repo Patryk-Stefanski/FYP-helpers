@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: myapp-argo-application
+  namespace: argocd
+spec:
+  project: default
+
+
+
+  source:
+    repoURL: git@github.com:Patryk-Stefanski/CovidStatsHelmCharts.git
+    targetRevision: HEAD
+    path: myapp
+
+    helm:
+      valueFiles:
+        - values.yaml
+      parameters:
+        - name: "apikey"
+          value: "<API_KEY>"
+
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: myapp
+
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+
+    automated:
+      selfHeal: true
+      prune: true
